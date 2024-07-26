@@ -10,16 +10,26 @@
 			<a class="mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700" href="#">Team</a>
 			<a class="mx-2 text-sm font-semibold text-gray-600 hover:text-indigo-700" href="#">Activity</a>
 		</div>
-		<buton class="flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full cursor-pointer">
+		<button class="flex items-center justify-center w-8 h-8 ml-auto overflow-hidden rounded-full cursor-pointer">
 			<img src="https://assets.codepen.io/5041378/internal/avatars/users/default.png?fit=crop&format=auto&height=512&version=1600304177&width=512" alt="">
-		</buton>
+		</button>
 	</div>
+    
 	<div class="flex justify-between px-10 mt-6">
 		<h1 class="text-2xl font-bold">Team Project Board</h1>
-        <button type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset hover:text-gray-900 ring-gray-300 hover:bg-blue-100 sm:mt-0 sm:w-auto">Add Card</button>
+        <button @click="openCardForm" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset hover:text-gray-900 ring-gray-300 hover:bg-blue-100 sm:mt-0 sm:w-auto">Add Card</button>
 	</div>
+    <div v-if="showOption.showCardForm">
+        <CategoryForm @close="closeCardForm" @reload="getCategories"/>
+    </div>
+     <div v-if="showOption.showAlert">
+        <AlertMessage :message="message"/>
+    </div>
+    <div v-if="showOption.showAction">
+        <AlertAction/>
+    </div>
 	<div class="flex flex-grow px-10 mt-4 space-x-6 overflow-auto">
-		
+		<CategoriesCard :categories="categories" />
 		<div class="flex-shrink-0 w-6"></div>
 	</div>
 </div>
@@ -35,5 +45,72 @@ import CategoriesCard from "./components/CategoriesCard.vue";
 import CategoryForm from "./components/CategoryForm.vue";
 import AlertAction from "./components/AlertAction.vue";
 import AlertMessage from "./components/AlertMessage.vue";
+import { onMounted, ref } from "vue";
+
+const categories = ref([])
+const message = ref(null)
+const showOption = ref({
+    showAlert: false,
+    showAction: false,
+    showCardForm:false
+})
+const alertData = {
+    default: null,
+    info: {
+        style: "text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800",
+        mode: "Info",
+        content: "",
+        // Keep the default icon
+    },
+    danger: {
+        style: "text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800",
+        mode: "Danger",
+        content: "",
+        // Keep the default icon
+    },
+    success: {
+        style: "text-green-800 border border-green-300 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 dark:border-green-800",
+        mode: "Success",
+        content: "",
+        // Keep the default icon
+    },
+    warning: {
+        style: "text-yellow-800 border border-yellow-300 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300 dark:border-yellow-800",
+        mode: "Warning",
+        content: "",
+        // Keep the default icon
+    },
+    dark: {
+        style: "text-gray-800 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600",
+        mode: "Dark",
+        content: "",
+        // Keep the default icon
+    }
+};
+
+function openCardForm(){
+    showOption.value.showCardForm = true
+    console.log('open', showOption)
+}
+function closeCardForm(){
+    showOption.value.showCardForm = false
+}
+
+async function getCategories() {
+    try {
+        const response = await WordpressAPI.fetchCategories()
+        console.log(response)
+        categories.value = response.sort((a, b) => a.id - b.id)
+    } catch (err) {
+        console.error('Something Wrong', err)
+    } finally {
+        const info = alertData.info
+        info.content = 'Data loading successfully'
+        message.value = info
+        showOption.showAlert = true
+        console.log(showOption)
+    }
+}
+onMounted(getCategories)
 
 </script>

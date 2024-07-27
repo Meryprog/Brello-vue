@@ -23,13 +23,11 @@
         <CategoryForm @close="closeCardForm" @reload="getCategories"/>
     </div>
      <div v-if="showOption.showAlert">
-        <AlertMessage :message="message"/>
+        <AlertMessage :message="message" />
     </div>
-    <div v-if="showOption.showAction">
-        <AlertAction/>
-    </div>
+
 	<div class="flex flex-grow px-10 mt-4 space-x-6 overflow-auto">
-		<CategoriesCard :categories="categories" />
+		<CategoriesCard :categories="categories" @reload="getCategories"/>
 		<div class="flex-shrink-0 w-6"></div>
 	</div>
 </div>
@@ -46,7 +44,7 @@ import CategoryForm from "./components/CategoryForm.vue";
 import AlertAction from "./components/AlertAction.vue";
 import AlertMessage from "./components/AlertMessage.vue";
 import { onMounted, ref } from "vue";
-
+import PostCard from "./components/PostCard.vue";
 const categories = ref([])
 const message = ref(null)
 const showOption = ref({

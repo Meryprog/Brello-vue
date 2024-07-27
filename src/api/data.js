@@ -53,7 +53,7 @@ class WordPressAPI {
       "Authorization"
     ] = `Bearer ${this.token}`;
     const response = await this.axiosInstance.delete(
-      `/wp-json/wp/v2/categories/${categoryId}`
+      `/wp-json/wp/v2/categories/${categoryId}?force=true`
     );
     return response.data;
   }
@@ -74,6 +74,12 @@ class WordPressAPI {
     return response.data;
   }
 
+  async fetchPostByCategoryId(id) {
+    const response = await this.axiosInstance.get(
+      
+    );
+    return response.data
+  }
   // ... (Similar methods for updating and deleting posts, categories, comments)
 }
 const apiInstance = new WordPressAPI("http://localhost/wordpress")

@@ -1,5 +1,5 @@
 <template>
-<div id="alert-1" class="animate-bounce flex text-xl items-center p-4 mb-4  rounded-lg " :class="message.style" role="alert">
+<div id="alert-1" class="min-w-full z-10 absolute animate-bounce flex text-xl items-center p-4 mb-4  rounded-lg " :class="message.style" role="alert">
     <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
         <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
     </svg>
@@ -22,7 +22,7 @@ defineProps({
         type: Object,
         required: false,
         default: {
-            style: "text-blue-400 bg-blue-100 dark:bg-blue-200 dark:text-blue-400",
+            style: "text-blue-400 bg-blue-200 dark:bg-blue-800 dark:text-blue-400",
             mode: "Info",
             content: "All Data Load form Wordpress REST API"
         }

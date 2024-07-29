@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-col w-screen h-screen overflow-auto text-gray-700 bg-gradient-to-tr from-blue-200 via-indigo-200 to-pink-200">
+    <div class="relative flex flex-col w-screen h-screen overflow-auto text-gray-700 bg-gradient-to-tr from-blue-200 via-indigo-200 to-pink-200">
 	<div class="flex items-center flex-shrink-0 w-full h-16 px-10 bg-white bg-opacity-75">
 		<svg class="w-8 h-8 text-indigo-600 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
@@ -17,17 +17,18 @@
     
 	<div class="flex justify-between px-10 mt-6">
 		<h1 class="text-2xl font-bold">Team Project Board</h1>
+        <button @click="reload" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset hover:text-gray-900 ring-gray-300 hover:bg-green-200 sm:mt-0 sm:w-auto">Reload Cards</button>
         <button @click="openCardForm" type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset hover:text-gray-900 ring-gray-300 hover:bg-blue-100 sm:mt-0 sm:w-auto">Add Card</button>
 	</div>
     <div v-if="showOption.showCardForm">
-        <CategoryForm @close="closeCardForm" @reload="getCategories"/>
+        <CategoryForm @close="closeCardForm" @reload="reload"/>
     </div>
      <div v-if="showOption.showAlert">
-        <AlertMessage :message="message" />
+        <AlertMessage :message="message" @closeAlert="closeAlertMessage"/>
     </div>
 
-	<div class="flex flex-grow px-10 mt-4 space-x-6 overflow-auto">
-		<CategoriesCard :categories="categories" @reload="getCategories"/>
+	<div class="flex flex-grow px-10 mt-4 space-x-6 overflow-auto w-full h-40 scroller">
+		<CategoriesCard :categories="categories" @reloa="reload" @preload="reload"/>
 		<div class="flex-shrink-0 w-6"></div>
 	</div>
 </div>
@@ -45,6 +46,7 @@ import AlertAction from "./components/AlertAction.vue";
 import AlertMessage from "./components/AlertMessage.vue";
 import { onMounted, ref } from "vue";
 import PostCard from "./components/PostCard.vue";
+
 const categories = ref([])
 const message = ref(null)
 const showOption = ref({
@@ -55,7 +57,7 @@ const showOption = ref({
 const alertData = {
     default: null,
     info: {
-        style: "text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800",
+        style: "text-blue-800 border border-blue-300 rounded-lg bg-white-50 dark:bg-white dark:text-blue-400 dark:border-blue-800",
         mode: "Info",
         content: "",
         // Keep the default icon
@@ -85,7 +87,9 @@ const alertData = {
         // Keep the default icon
     }
 };
-
+function closeAlertMessage() {
+    showOption.value.showAlert = false
+}
 function openCardForm(){
     showOption.value.showCardForm = true
     console.log('open', showOption)
@@ -93,22 +97,28 @@ function openCardForm(){
 function closeCardForm(){
     showOption.value.showCardForm = false
 }
-
+function deleteMessage() {
+    const info = alertData.success
+        info.content = 'Data Update successfully'
+        message.value = info
+        showOption.value.showAlert = true
+}
+function reload() {
+    getCategories()
+    getCategories()
+    
+}
 async function getCategories() {
     try {
         const response = await WordpressAPI.fetchCategories()
-        console.log(response)
+        console.log('hello',response)
         categories.value = response.sort((a, b) => a.id - b.id)
     } catch (err) {
         console.error('Something Wrong', err)
-    } finally {
-        const info = alertData.info
-        info.content = 'Data loading successfully'
-        message.value = info
-        showOption.showAlert = true
-        console.log(showOption)
-    }
+    } 
 }
+
+
 onMounted(getCategories)
 
 </script>

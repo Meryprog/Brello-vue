@@ -32,13 +32,17 @@
                 <path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z"/>
             </svg>
             </div>
-            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-              <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Update Card</h3>
-              <form >
+            <div class="mt-3 w-72 text-center sm:ml-4 sm:mt-0 sm:text-left">
+              <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">UPDATE CARD ID :  {{ data.id}}</h3>
+              <form class="w-full" >
                 <div class="sm:col-span-12">
-                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">New name for Card ID : {{ data.id}}</label>
+                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">New Name</label>
                     <div class="mt-2">
                         <input id="email" v-model="data.name" name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                    <label for="description" class="block text-sm font-medium leading-6 text-gray-900">New Description</label>
+                    <div class="mt-2">
+                        <textarea id="descritpion" v-model="data.description" name="descrioption"  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
                     </div>
                 </div>
             </form>
@@ -87,13 +91,17 @@
                 <path d="M16 0H4a2 2 0 0 0-2 2v1H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v2H1a1 1 0 0 0 0 2h1v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4.5a3 3 0 1 1 0 6 3 3 0 0 1 0-6ZM13.929 17H7.071a.5.5 0 0 1-.5-.5 3.935 3.935 0 1 1 7.858 0 .5.5 0 0 1-.5.5Z"/>
             </svg>
             </div>
-            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+            <div class="mt-3 w-72 text-center sm:ml-4 sm:mt-0 sm:text-left">
               <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Create New Card</h3>
-              <form >
+              <form class="w-full mx-3">
                 <div class="sm:col-span-12">
                     <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Card name</label>
                     <div class="mt-2">
                         <input id="email" v-model="name" name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                    </div>
+                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Card description</label>
+                    <div class="mt-2">
+                        <textarea id="descritpion" v-model="description" name="descrioption"  class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"></textarea>
                     </div>
                 </div>
             </form>
@@ -119,7 +127,8 @@ import { onMounted, ref } from 'vue';
 export default {
   data() {
     return {
-      name: ''
+      name: '',
+      description:''
     }
   },
   props: {
@@ -139,22 +148,24 @@ export default {
     },
     methods: {
         closeModal() {
-            this.$emit('close')
+        this.$emit('close')
+            
         },
         createCard() {
             try {
-            const response = WordPressAPI.createCategories(this.name)
+            const response = WordPressAPI.createCategories(this.name, this.description)
                 console.log("Success", response)
             this.closeModal()
             } catch (err) {
                 console.error("Bad ", err)
             } finally {
               this.$emit('reload')
+              console.log('create reload')
             }
       },
       updateCard(data) {
           try {
-            const response = WordPressAPI.updateCategory(data.id, data.name)
+            const response = WordPressAPI.updateCategory(data.id, data.name, data.description)
             console.log('Success',data)
           } catch (err) {
             console.error('Something Wrong', err)

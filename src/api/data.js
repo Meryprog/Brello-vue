@@ -11,10 +11,8 @@ class WordPressAPI {
   }
 
   // Fetch Methods
-  async fetchPosts(params = {}) {
-    const response = await this.axiosInstance.get("/wp-json/wp/v2/posts", {
-      params,
-    });
+  async fetchPosts() {
+    const response = await this.axiosInstance.get("/wp-json/wp/v2/posts");
     return response.data;
   }
 
@@ -28,22 +26,24 @@ class WordPressAPI {
     const response = await this.axiosInstance.get("/wp-json/wp/v2/categories");
     return response.data;
   }
-  async createCategories(name) {
+  async createCategories(name, description) {
     this.axiosInstance.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.token}`;
     const response = await this.axiosInstance.post("/wp-json/wp/v2/categories", {
-      name: name
+      name: name,
+      description:description
     });
     return response.data;
   }
-  async updateCategory(categoryId, categoryData) {
+  async updateCategory(categoryId, categoryName, categoryDescription) {
     this.axiosInstance.defaults.headers.common[
       "Authorization"
     ] = `Bearer ${this.token}`;
     const response = await this.axiosInstance.post(
       `/wp-json/wp/v2/categories/${categoryId}`, {
-        name:categoryData
+        name: categoryName,
+        description: categoryDescription
       }
     );
     return response.data;
@@ -58,6 +58,9 @@ class WordPressAPI {
     return response.data;
   }
   async fetchComments(postId) {
+    this.axiosInstance.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${this.token}`;
     const response = await this.axiosInstance.get(
       `/wp-json/wp/v2/comments?post=${postId}`
     );
@@ -65,21 +68,41 @@ class WordPressAPI {
   }
 
   // Mutation Methods (Add, Update, Delete)
-  async createPost(postData) {
+  async createPost(postData, cardID) {
     // ... (Handle authentication if needed)
+    this.axiosInstance.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${this.token}`;
     const response = await this.axiosInstance.post(
       "/wp-json/wp/v2/posts",
-      postData
+      {
+        title: postData.title,
+        content: postData.content,
+        status: "publish",
+        categories: cardID
+      }
     );
     return response.data;
   }
-
+  
   async fetchPostByCategoryId(id) {
-    const response = await this.axiosInstance.get(
-      
-    );
-    return response.data
+    const response = await this.axiosInstance.get(`/wp-json/wp/v2/posts?categories=${id}`);
+    return response.data;
   }
+  async fetchPostByState() {
+    const response = await this.axiosInstance.get(`/wp-json/wp/v2/posts?state=wheurg-out`);
+    return response.data;
+  }
+  async updatePostByState(id) {
+    this.axiosInstance.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${this.token}`;
+    const response = await this.axiosInstance.post(`/wp-json/wp/v2/posts/${id}`,{
+      state:"published"
+    });
+    return response.data;
+  }
+ 
   // ... (Similar methods for updating and deleting posts, categories, comments)
 }
 const apiInstance = new WordPressAPI("http://localhost/wordpress")

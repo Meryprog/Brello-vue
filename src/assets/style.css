@@ -1,0 +1,35 @@
+
+.scroller {
+  --sb-track-color: #232E33;
+  --sb-thumb-color: #6BAF8D;
+  --sb-size: 5px;
+}
+
+.scroller::-webkit-scrollbar {
+  width: var(--sb-size)
+}
+
+.scroller::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 3px;
+}
+
+.scroller::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 3px;
+  
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .scroller {
+    scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
+}
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
